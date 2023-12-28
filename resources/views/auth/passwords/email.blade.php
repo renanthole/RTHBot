@@ -5,7 +5,6 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>{{ config('app.name') }}</title>
 
-    <!-- Tell the browser to be responsive to screen width -->
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css"
@@ -21,10 +20,9 @@
         <a href="{{ url('/home') }}"><b>{{ config('app.name') }}</b></a>
     </div>
 
-    <!-- /.login-logo -->
     <div class="card">
         <div class="card-body login-card-body">
-            <p class="login-box-msg">You forgot your password? Here you can easily retrieve a new password.</p>
+            <p class="login-box-msg">Você esqueceu sua senha? Aqui você pode recuperar facilmente uma nova senha.</p>
 
             @if (session('status'))
                 <div class="alert alert-success">
@@ -50,23 +48,17 @@
 
                 <div class="row">
                     <div class="col-12">
-                        <button type="submit" class="btn btn-primary btn-block">Send Password Reset Link</button>
+                        <button type="submit" class="btn btn-primary btn-block">Solicitar alteração</button>
                     </div>
-                    <!-- /.col -->
                 </div>
             </form>
 
             <p class="mt-3 mb-1">
                 <a href="{{ route("login") }}">Login</a>
             </p>
-            <p class="mb-0">
-                <a href="{{ route("register") }}" class="text-center">Register a new membership</a>
-            </p>
         </div>
-        <!-- /.login-card-body -->
     </div>
 </div>
-<!-- /.login-box -->
 
 <script src="{{ mix('js/app.js') }}" defer></script>
 
