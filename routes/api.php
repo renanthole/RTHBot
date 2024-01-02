@@ -14,4 +14,5 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::post('/sent', [App\Http\Controllers\Api\MessageController::class, 'sent']);
 Route::post('/received', [App\Http\Controllers\Api\MessageController::class, 'received']);
