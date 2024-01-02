@@ -14,6 +14,4 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+Route::post('/received', [App\Http\Controllers\Api\MessageController::class, 'received']);
