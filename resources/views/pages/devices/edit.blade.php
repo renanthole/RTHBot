@@ -65,6 +65,25 @@
                         </div>
                     </div>
                 </div>
+                @if (!empty($device->instancia) && !empty($device->token))
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group {{ $errors->has('api') ? 'has-danger' : '' }}">
+                                <label for="api" class="bmd-label-floating">{{ __('API da Instância') }}</label>
+                                <input type="text" name="api"
+                                    class="form-control {{ $errors->has('api') ? 'is-invalid' : '' }}" id="api"
+                                    value="https://api.z-api.io/instances/{{ $device->instancia }}/token/{{ $device->token }}"
+                                    readonly />
+                                <small id="apiHelp"
+                                    class="form-text text-muted">{{ __('Endereço base para conexão com API da Z-API') }}</small>
+                                @if ($errors->has('api'))
+                                    <span id="api_error" class="error text-danger"
+                                        for="input_api">{{ $errors->first('api') }}</span>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                @endif
             </div>
             <div class="card-footer clearfix">
                 <button class="btn btn-primary btn-sm"><i class="fas fa-save"></i> {{ __('Salvar') }}</button>
