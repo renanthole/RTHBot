@@ -66,14 +66,20 @@
                     </div>
                 </div>
                 @if (!empty($device->instancia) && !empty($device->token))
-                    <div class="row">
-                        <div class="col-md-12">
+                    <div class="row align-items-center">
+                        <div class="col-md-10">
                             <div class="form-group {{ $errors->has('api') ? 'has-danger' : '' }}">
                                 <label for="api" class="bmd-label-floating">{{ __('API da Instância') }}</label>
-                                <input type="text" name="api"
-                                    class="form-control {{ $errors->has('api') ? 'is-invalid' : '' }}" id="api"
-                                    value="https://api.z-api.io/instances/{{ $device->instancia }}/token/{{ $device->token }}"
-                                    readonly />
+                                <div class="input-group mb-3">
+                                    <input type="text" name="api"
+                                        class="form-control {{ $errors->has('api') ? 'is-invalid' : '' }}" id="api"
+                                        value="https://api.z-api.io/instances/{{ $device->instancia }}/token/{{ $device->token }}"
+                                        readonly />
+                                    <div class="input-group-prepend">
+                                        <button class="btn btn-outline-secondary" type="button" id="copyBtn"><i
+                                                class="fa fa-copy"></i></button>
+                                    </div>
+                                </div>
                                 <small id="apiHelp"
                                     class="form-text text-muted">{{ __('Endereço base para conexão com API da Z-API') }}</small>
                                 @if ($errors->has('api'))
@@ -82,6 +88,22 @@
                                 @endif
                             </div>
                         </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <button type="button" id="getStatus" class="btn btn-primary btn-sm btn-block"
+                                    data-id="{{ $device->id }}">Verificar conexão</button>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+                @if ((bool) $device->connected === true)
+                    <div class="alert alert-success" role="alert">
+                        <h4 class="alert-heading">Dispositivo conectado</h4>
+                        <p>Dispositivo conectado a Z-API e pronto para o envio de mensagens</p>
+                        <a href="#" class="btn btn-danger btn-xs">Desconectar dispositivo</a>
+                        <hr>
+                        <small class="mb-0">Verificado em
+                            {{ date('d/m/Y H:i', strtotime($device->connected_at)) }}</small>
                     </div>
                 @endif
             </div>
@@ -89,6 +111,11 @@
                 <button class="btn btn-primary btn-sm"><i class="fas fa-save"></i> {{ __('Salvar') }}</button>
                 <a href="{{ route('devices.index') }}" class="btn btn-secondary btn-sm">{{ __('Cancelar') }}</a>
             </div>
+            <div class="overlay d-none"><i class="fas fa-sync fa-spin fa-lg"></i></div>
         </div>
     </form>
 @endsection
+
+@push('js')
+    <script src="{{ asset('js/whatsapp.js') }}"></script>
+@endpush

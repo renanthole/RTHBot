@@ -53,12 +53,13 @@
         @include('layouts.footer')
     </div>
 
-    <script src="{{ mix('js/app.js') }}" defer></script>
+    @include('sweetalert::alert')
+    
+    <script src="{{ asset('js/app.js') }}"></script>
 
     @yield('third_party_scripts')
 
-    @stack('page_scripts')
-    @include('sweetalert::alert')
+    @stack('js')
 </body>
 
 </html>

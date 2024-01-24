@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Api\ApiManager;
 use App\Models\Device;
 use Exception;
 use Illuminate\Http\Request;

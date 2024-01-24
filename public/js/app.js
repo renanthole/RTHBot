@@ -26,6 +26,17 @@
 __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
 __webpack_require__(/*! admin-lte */ "./node_modules/admin-lte/dist/js/adminlte.min.js");
 __webpack_require__(/*! laravel-data-method */ "./node_modules/laravel-data-method/dist/data-method.js");
+function copyInput() {
+  var inputElement = document.getElementById("api");
+  inputElement.select();
+  document.execCommand("copy");
+  window.getSelection().removeAllRanges();
+}
+jQuery(function () {
+  $("#copyBtn").on("click", function () {
+    copyInput();
+  });
+});
 
 /***/ }),
 

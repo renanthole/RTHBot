@@ -16,14 +16,16 @@ use Illuminate\Support\Facades\Route;
 
 Auth::routes(['register' => false]);
 
-Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('/');
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::group(['middleware' => 'auth'], function () {
+    Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('/');
+    Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
-Route::prefix('devices')->name('devices.')->group(function () {
-    Route::get('/', [App\Http\Controllers\DeviceController::class, 'index'])->name('index');
-    Route::get('/new', [App\Http\Controllers\DeviceController::class, 'create'])->name('create');
-    Route::post('/new', [App\Http\Controllers\DeviceController::class, 'store'])->name('store');
-    Route::get('/edit/{device}', [App\Http\Controllers\DeviceController::class, 'edit'])->name('edit');
-    Route::put('/edit/{device}', [App\Http\Controllers\DeviceController::class, 'update'])->name('update');
-    Route::delete('/delete/{device}', [App\Http\Controllers\DeviceController::class, 'destroy'])->name('destroy');
+    Route::prefix('devices')->name('devices.')->group(function () {
+        Route::get('/', [App\Http\Controllers\DeviceController::class, 'index'])->name('index');
+        Route::get('/new', [App\Http\Controllers\DeviceController::class, 'create'])->name('create');
+        Route::post('/new', [App\Http\Controllers\DeviceController::class, 'store'])->name('store');
+        Route::get('/edit/{device}', [App\Http\Controllers\DeviceController::class, 'edit'])->name('edit');
+        Route::put('/edit/{device}', [App\Http\Controllers\DeviceController::class, 'update'])->name('update');
+        Route::delete('/delete/{device}', [App\Http\Controllers\DeviceController::class, 'destroy'])->name('destroy');
+    });
 });

@@ -35,19 +35,19 @@
                         <th class="text-center">Celular</th>
                         <th class="text-center">Instância</th>
                         <th class="text-center">Token</th>
-                        <th class="text-center">Data de cadastro</th>
                         <th class="text-right">Ações</th>
                     </tr>
                 </thead>
                 <tbody>
                     @forelse ($devices as $device)
                         <tr>
-                            <td>{{ $device->id }}</td>
+                            <td>{{ $device->id }} <i
+                                    class="fas fa-dot-circle text-{{ (bool) $device->connected === true ? 'success' : 'danger' }}"></i>
+                            </td>
                             <td class="text-center">{{ $device->name }}</td>
                             <td class="text-center">{{ $device->phone }}</td>
                             <td class="text-center">{{ $device->instancia }}</td>
                             <td class="text-center">{{ $device->token }}</td>
-                            <td class="text-center">{{ date('d/m/Y H:i', strtotime($device->created_at)) }}</td>
                             <td class="text-right">
                                 <a href="{{ route('devices.edit', $device->id) }}" class="btn btn-warning btn-xs">
                                     <i class="fas fa-edit"></i>
