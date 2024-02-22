@@ -2,13 +2,22 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Api\ApiManager;
 use App\Http\Controllers\Controller;
 use App\Models\Chat;
+use App\Models\Device;
 use App\Models\Message;
 use Illuminate\Http\Request;
 
 class MessageController extends Controller
 {
+    private $apiManager;
+
+    public function __construct()
+    {
+        $this->apiManager = new ApiManager(config('z-api'));
+    }
+
     public function sent(Request $request)
     {
         $message = $request->text['message'];
@@ -61,9 +70,13 @@ class MessageController extends Controller
                 'created_at' => now()
             ]);
 
+            $device = Device::find(1);
+
             if (str_contains($message, '123')) {
+                $this->apiManager->sendMessage("Você enviou uma mensagem contendo o texto 'Mensagem 123'", $phone, $device->instancia, $device->token);
                 return response()->json('Mensagem 123');
             } else {
+                $this->apiManager->sendMessage("Você enviou uma mensagem que não contem o texto 'Mensagem 123'", $phone, $device->instancia, $device->token);
                 return response()->json('Outra mensagem');
             }
         }

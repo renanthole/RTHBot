@@ -4,6 +4,12 @@
         <p>Home</p>
     </a>
 </li>
+<li class="nav-item">
+    <a href="{{ route('chats.index') }}" class="nav-link {{ isset($activePage) && $activePage === 'chats' ? 'active' : '' }}">
+        <i class="nav-icon fas fa-comments"></i>
+        <p>Chats</p>
+    </a>
+</li>
 <li class="nav-header">Configurações</li>
 <li class="nav-item">
     <a href="{{ route('devices.index') }}" class="nav-link {{ isset($activePage) && $activePage === 'devices' ? 'active' : '' }}">

@@ -22,3 +22,7 @@ Route::prefix('whatsapp')->group(function () {
     Route::get('/qrcode/{device}', [App\Http\Controllers\Api\WhatsappController::class, 'qrCodeImage']);
     Route::post('/disconnect/{device}', [App\Http\Controllers\Api\WhatsappController::class, 'disconnect']);
 });
+
+Route::prefix('chat')->group(function () {
+    Route::post('/new', [App\Http\Controllers\Api\ChatController::class, 'store']);
+});

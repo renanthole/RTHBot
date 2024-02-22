@@ -72,9 +72,22 @@ class ApiManager
         }
     }
 
-    public function sendMessage($message)
+    public function sendMessage($message, $phone, $instanceId, $apiToken)
     {
-        // Lógica para enviar mensagem à API
+        $url = $this->buildApiUrl('send-text', $instanceId, $apiToken);
+
+        try {
+            $response = Http::timeout(10)->post($url, ['phone' => $phone, 'message' => $message]);
+
+            if ($response->successful()) {
+                return json_decode($response->body());
+            } else {
+                return 'Erro na requisição: ' . $response->status();
+            }
+        } catch (Exception $e) {
+            dd('erro');
+            return 'Erro na requisição: ' . $e->getMessage();
+        }
     }
 
     public function readMessages()
