@@ -73,11 +73,13 @@ class MessageController extends Controller
             $device = Device::find(1);
 
             if (str_contains($message, '123')) {
-                $this->apiManager->sendMessage("Você enviou uma mensagem contendo o texto 'Mensagem 123'", $phone, $device->instancia, $device->token);
-                return response()->json('Mensagem 123');
+                // $this->apiManager->sendMessage("Você enviou uma mensagem contendo o texto 'Mensagem 123'", $phone, $device->instancia, $device->token);
+                // return response()->json('Mensagem 123');
+                return true;
             } else {
-                $this->apiManager->sendMessage("Você enviou uma mensagem que não contem o texto 'Mensagem 123'", $phone, $device->instancia, $device->token);
-                return response()->json('Outra mensagem');
+                // $this->apiManager->sendMessage("Você enviou uma mensagem que não contem o texto 'Mensagem 123'", $phone, $device->instancia, $device->token);
+                // return response()->json('Outra mensagem');
+                return true;
             }
         }
     }
