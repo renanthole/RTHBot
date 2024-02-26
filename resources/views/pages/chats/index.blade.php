@@ -28,21 +28,21 @@
                     <tr>
                         <th>#</th>
                         <th class="text-center">Celular</th>
-                        <th class="text-center">Origem</th>
+                        <th class="text-center">Data<br />Início</th>
+                        <th class="text-center">Data<br />Última Mensagem</th>
                         <th class="text-right">Ações</th>
                     </tr>
                 </thead>
                 <tbody>
                     @forelse ($chats as $chat)
                         <tr>
-                            <td>{{ $chat->id }} <i
-                                    class="fas fa-dot-circle text-{{ (bool) $chat->connected === true ? 'success' : 'danger' }}"></i>
-                            </td>
+                            <td>{{ $chat->id }}</td>
                             <td class="text-center">{{ $chat->phone }}</td>
-                            <td class="text-center">{{ $chat->instancia }}</td>
+                            <td class="text-center">{{ date('d/m/Y H:i', strtotime($chat->created_at)) }}</td>
+                            <td class="text-center">{{ date('d/m/Y H:i', strtotime($chat->updated_at)) }}</td>
                             <td class="text-right">
                                 <a href="{{ route('chats.show', $chat->id) }}" class="btn btn-success btn-xs">
-                                    <i class="fas fa-eye"></i>
+                                    <i class="fas fa-eye"></i> Visualizar
                                 </a>
                             </td>
                         </tr>

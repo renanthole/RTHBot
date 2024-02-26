@@ -7,7 +7,9 @@ use App\Http\Controllers\Controller;
 use App\Models\Chat;
 use App\Models\Device;
 use App\Models\Message;
+use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class MessageController extends Controller
 {
@@ -50,37 +52,42 @@ class MessageController extends Controller
 
     public function received(Request $request)
     {
-        $message = $request->text['message'];
-        $phone = $request->phone;
-        $status = $request->status;
-        $messageId = $request->messageId;
+        try {
+            DB::beginTransaction();
+            
+            $message = $request->text['message'];
+            $phone = $request->phone;
+            $status = $request->status;
+            $messageId = $request->messageId;
+            $device = Device::where('phone', $request->connectedPhone)->first();
 
-        $chat = Chat::firstOrCreate(
-            ['phone' => $phone],
-            ['finished_at' => null]
-        );
+            $chat = Chat::firstOrCreate(
+                ['device_id' => $device->id, 'phone' => $phone],
+                ['finished_at' => null]
+            );
 
-        if ($chat) {
-            Message::create([
-                'chat_id' => $chat->id,
-                'message_id' => $messageId,
-                'type' => 'ReceivedCallback',
-                'message' => $message,
-                'status' => $status,
-                'created_at' => now()
-            ]);
+            if ($chat) {
+                Message::create([
+                    'chat_id' => $chat->id,
+                    'message_id' => $messageId,
+                    'type' => 'ReceivedCallback',
+                    'message' => $message,
+                    'status' => $status,
+                    'created_at' => now()
+                ]);
 
-            $device = Device::find(1);
+                if (str_contains($message, '123')) {
+                    // $this->apiManager->sendMessage("Você enviou uma mensagem contendo o texto 'Mensagem 123'", $phone, $device);
+                } else {
+                    // $this->apiManager->sendMessage("Você enviou uma mensagem que não contem o texto 'Mensagem 123'", $phone, $device);
+                }
 
-            if (str_contains($message, '123')) {
-                // $this->apiManager->sendMessage("Você enviou uma mensagem contendo o texto 'Mensagem 123'", $phone, $device->instancia, $device->token);
-                // return response()->json('Mensagem 123');
-                return true;
-            } else {
-                // $this->apiManager->sendMessage("Você enviou uma mensagem que não contem o texto 'Mensagem 123'", $phone, $device->instancia, $device->token);
-                // return response()->json('Outra mensagem');
-                return true;
+                DB::commit();
             }
+        } catch (Exception $e) {
+            DB::rollBack();
+            logger($e->getMessage());
+            return response()->json('Error: ' . $e->getMessage() . '. Line: ' . $e->getLine(), 500);
         }
     }
 }

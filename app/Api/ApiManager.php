@@ -2,7 +2,10 @@
 
 namespace App\Api;
 
+use App\Models\Chat;
+use App\Models\Message;
 use Exception;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 
 class ApiManager
@@ -72,9 +75,9 @@ class ApiManager
         }
     }
 
-    public function sendMessage($message, $phone, $instanceId, $apiToken)
+    public function sendMessage($message, $phone, $device)
     {
-        $url = $this->buildApiUrl('send-text', $instanceId, $apiToken);
+        $url = $this->buildApiUrl('send-text', $device->instancia, $device->token);
 
         try {
             $response = Http::timeout(10)->post($url, ['phone' => $phone, 'message' => $message]);
@@ -85,7 +88,6 @@ class ApiManager
                 return 'Erro na requisição: ' . $response->status();
             }
         } catch (Exception $e) {
-            dd('erro');
             return 'Erro na requisição: ' . $e->getMessage();
         }
     }

@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Api;
 use App\Api\ApiManager;
 use App\Http\Controllers\Controller;
 use App\Models\Device;
+use App\Models\Message;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ChatController extends Controller
 {
@@ -39,18 +41,31 @@ class ChatController extends Controller
     public function store(Request $request)
     {
         try {
-            return dd($request);
+            DB::beginTransaction();
+
             $device = Device::find($request->device);
 
             if (!$device) {
                 abort(404);
             }
 
-            $apiManager = new ApiManager(config('z-api'));
-            $sendMessage = $apiManager->sendMessage(['phone' => '5517997438768', 'message' => $request->message], $device->instanceId, $device->apiToken);
+            $message = Message::create([
+                'chat_id' => $request->chat,
+                'type' => 'DeliveryCallback',
+                'message' => $request->message,
+                'status' => 'DELIVERIED',
+                'created_at' => now()
+            ]);
 
+            $apiManager = new ApiManager(config('z-api'));
+            $sendMessage = $apiManager->sendMessage($request->message, $request->phone, $device);
+
+            $message->update(['message_id' => $sendMessage->messageId]);
+
+            DB::commit();
             return response()->json($sendMessage, 200);
         } catch (Exception $e) {
+            DB::rollBack();
             logger($e->getMessage());
             return response()->json('Server error: ' . $e->getMessage(), 500);
         }

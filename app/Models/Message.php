@@ -22,4 +22,9 @@ class Message extends Model
         'message',
         'status'
     ];
+
+    public function typeMessageDelivery()
+    {
+        return $this->type === 'DeliveryCallback';
+    }
 }

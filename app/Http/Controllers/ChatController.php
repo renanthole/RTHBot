@@ -43,11 +43,16 @@ class ChatController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  \Illuminate\Http\Request  $request
+     * @param  Chat  $chat
      * @return \Illuminate\Http\Response
      */
-    public function show(Chat $chat)
+    public function show(Request $request, Chat $chat)
     {
+        if ($request->ajax()) {
+            return view('pages.chats.messages', compact(['chat']));
+        }
+
         return view('pages.chats.show', compact(['chat']));
     }
 

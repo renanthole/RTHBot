@@ -53,8 +53,12 @@
         @include('layouts.footer')
     </div>
 
+    <div class="overlay d-none">
+        <div class="loader"></div>
+    </div>
+
     @include('sweetalert::alert')
-    
+
     <script src="{{ asset('js/app.js') }}"></script>
 
     @yield('third_party_scripts')
