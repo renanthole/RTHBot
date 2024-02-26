@@ -42617,14 +42617,6 @@ a.text-muted:hover {
   border-color: #4b545c !important;
 }
 
-body {
-  margin: 0;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
-  overflow: hidden;
-}
-
 .overlay {
   position: fixed;
   top: 0;
