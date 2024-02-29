@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Api\ApiManager;
 use App\Http\Controllers\Controller;
+use App\Models\Chat;
 use App\Models\Device;
 use App\Models\Message;
 use Exception;
@@ -44,23 +45,14 @@ class ChatController extends Controller
             DB::beginTransaction();
 
             $device = Device::find($request->device);
+            $chat = Chat::find($request->chat);
 
             if (!$device) {
                 abort(404);
             }
 
-            $message = Message::create([
-                'chat_id' => $request->chat,
-                'type' => 'DeliveryCallback',
-                'message' => $request->message,
-                'status' => 'DELIVERIED',
-                'created_at' => now()
-            ]);
-
             $apiManager = new ApiManager(config('z-api'));
-            $sendMessage = $apiManager->sendMessage($request->message, $request->phone, $device);
-
-            $message->update(['message_id' => $sendMessage->messageId]);
+            $sendMessage = $apiManager->sendMessage($request->message, $request->phone, $device, $chat);
 
             DB::commit();
             return response()->json($sendMessage, 200);
