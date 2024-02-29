@@ -17,3 +17,9 @@
         <p>Dispositivos</p>
     </a>
 </li>
+<li class="nav-item">
+    <a href="{{ route('quizzes.index') }}" class="nav-link {{ isset($activePage) && $activePage === 'quizzes' ? 'active' : '' }}">
+        <i class="nav-icon fas fa-question"></i>
+        <p>Questionários</p>
+    </a>
+</li>

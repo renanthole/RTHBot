@@ -9,7 +9,7 @@
             </div>
             <img class="direct-chat-img" src="{{ asset('img/avatar.png') }}" alt="{{ config('app.name') }}">
             <div class="direct-chat-text">
-                {{ $message->message }}
+                {!! $message->message !!}
             </div>
         </div>
     @empty

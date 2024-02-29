@@ -75,7 +75,7 @@ class ApiManager
         }
     }
 
-    public function sendMessage($message, $phone, $device)
+    public function sendMessage($message, $phone, $device, $chat)
     {
         $url = $this->buildApiUrl('send-text', $device->instancia, $device->token);
 
@@ -83,7 +83,18 @@ class ApiManager
             $response = Http::timeout(10)->post($url, ['phone' => $phone, 'message' => $message]);
 
             if ($response->successful()) {
-                return json_decode($response->body());
+                $response = json_decode($response->body());
+
+                Message::create([
+                    'chat_id' => $chat->id,
+                    'message_id' => $response->messageId,
+                    'type' => 'DeliveryCallback',
+                    'message' => $message,
+                    'status' => 'DELIVERED',
+                    'created_at' => now()
+                ]);
+                
+                return $response;
             } else {
                 return 'Erro na requisição: ' . $response->status();
             }

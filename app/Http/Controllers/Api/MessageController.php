@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Chat;
 use App\Models\Device;
 use App\Models\Message;
+use App\Models\Question;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -76,8 +77,9 @@ class MessageController extends Controller
                     'created_at' => now()
                 ]);
 
-                if (str_contains($message, '123')) {
-                    // $this->apiManager->sendMessage("Você enviou uma mensagem contendo o texto 'Mensagem 123'", $phone, $device);
+                if ($chat->wasRecentlyCreated) {
+                    $question = Question::where('position', 1)->first();
+                    $this->apiManager->sendMessage($question->question, $phone, $device, $chat);
                 } else {
                     // $this->apiManager->sendMessage("Você enviou uma mensagem que não contem o texto 'Mensagem 123'", $phone, $device);
                 }

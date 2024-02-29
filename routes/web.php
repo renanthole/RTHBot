@@ -38,4 +38,31 @@ Route::group(['middleware' => 'auth'], function () {
         Route::put('/edit/{device}', [App\Http\Controllers\DeviceController::class, 'update'])->name('update');
         Route::delete('/delete/{device}', [App\Http\Controllers\DeviceController::class, 'destroy'])->name('destroy');
     });
+
+    Route::prefix('quizzes')->name('quizzes.')->group(function () {
+        Route::get('/', [App\Http\Controllers\QuizController::class, 'index'])->name('index');
+        Route::get('/new', [App\Http\Controllers\QuizController::class, 'create'])->name('create');
+        Route::post('/new', [App\Http\Controllers\QuizController::class, 'store'])->name('store');
+        Route::get('/edit/{quiz}', [App\Http\Controllers\QuizController::class, 'edit'])->name('edit');
+        Route::put('/edit/{quiz}', [App\Http\Controllers\QuizController::class, 'update'])->name('update');
+        Route::delete('/delete/{quiz}', [App\Http\Controllers\QuizController::class, 'destroy'])->name('destroy');
+    });
+
+    Route::prefix('quizzes/{quiz}/questions')->name('questions.')->group(function () {
+        Route::get('/', [App\Http\Controllers\QuestionController::class, 'index'])->name('index');
+        Route::get('/new', [App\Http\Controllers\QuestionController::class, 'create'])->name('create');
+        Route::post('/new', [App\Http\Controllers\QuestionController::class, 'store'])->name('store');
+        Route::get('/edit/{question}', [App\Http\Controllers\QuestionController::class, 'edit'])->name('edit');
+        Route::put('/edit/{question}', [App\Http\Controllers\QuestionController::class, 'update'])->name('update');
+        Route::delete('/delete/{question}', [App\Http\Controllers\QuestionController::class, 'destroy'])->name('destroy');
+    });
+
+    Route::prefix('quizzes/{quiz}/questions/answers')->name('answers.')->group(function () {
+        Route::get('/', [App\Http\Controllers\AnswerController::class, 'index'])->name('index');
+        Route::get('/new', [App\Http\Controllers\AnswerController::class, 'create'])->name('create');
+        Route::post('/new', [App\Http\Controllers\AnswerController::class, 'store'])->name('store');
+        Route::get('/edit/{answer}', [App\Http\Controllers\AnswerController::class, 'edit'])->name('edit');
+        Route::put('/edit/{answer}', [App\Http\Controllers\AnswerController::class, 'update'])->name('update');
+        Route::delete('/delete/{answer}', [App\Http\Controllers\AnswerController::class, 'destroy'])->name('destroy');
+    });
 });
