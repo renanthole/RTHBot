@@ -63,7 +63,7 @@ class MessageController extends Controller
             $status = $request->status;
             $messageId = $request->messageId;
             $device = Device::where('phone', $request->connectedPhone)->first();
-            $quiz = Quiz::where('id', 1)->first();
+            $quiz = Quiz::where('initial', 1)->first();
 
             $chat = Chat::firstOrCreate(
                 ['device_id' => $device->id, 'phone' => $phone, 'finished_at' => null],

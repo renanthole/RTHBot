@@ -22,7 +22,7 @@ class QuizController extends Controller
     {
         $this->apiManager = new ApiManager(config('z-api'));
     }
-    
+
     /**
      * Display a listing of the resource.
      *
@@ -180,10 +180,12 @@ class QuizController extends Controller
             $phone = $request->phone;
             $device = Device::where('id', 1)->first();
 
-            $chat = Chat::firstOrCreate(
-                ['device_id' => $device->id, 'phone' => $phone, 'finished_at' => null],
-                ['quiz_id' => $quiz->id]
-            );
+            $chat = Chat::firstOrCreate([
+                'device_id' => $device->id,
+                'quiz_id' => $quiz->id,
+                'phone' => $phone,
+                'finished_at' => null
+            ]);
 
             if ($chat) {
                 $question = Question::where('quiz_id', $quiz->id)->where('position', 1)->first();
