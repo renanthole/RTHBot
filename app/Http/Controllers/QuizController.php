@@ -162,7 +162,9 @@ class QuizController extends Controller
      */
     public function send(Quiz $quiz)
     {
-        return view('pages.quizzes.send', compact('quiz'));
+        $devices = Device::get();
+
+        return view('pages.quizzes.send', compact('quiz', 'devices'));
     }
 
     /**
@@ -178,7 +180,7 @@ class QuizController extends Controller
             DB::beginTransaction();
 
             $phone = $request->phone;
-            $device = Device::where('id', 1)->first();
+            $device = Device::where('id', $request->device_id)->first();
 
             $chat = Chat::firstOrCreate([
                 'device_id' => $device->id,

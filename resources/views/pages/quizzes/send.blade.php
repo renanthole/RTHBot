@@ -14,7 +14,25 @@
             </div>
             <div class="card-body">
                 <div class="row">
-                    <div class="col-md-12">
+                    <div class="col-12">
+                        <div class="form-group {{ $errors->has('device_id') ? 'has-danger' : '' }}">
+                            <label for="device_id" class="bmd-label-floating">{{ __('Dispositivo') }}</label>
+                            <select name="device_id" id="device_id" class="form-control">
+                                @forelse ($devices as $device)
+                                    <option value="{{ $device->id }}">{{ $device->name }}</option>
+                                @empty
+                                    <option disabled selected>Nenhum registro encontrado</option>
+                                @endforelse
+                            </select>
+                            @if ($errors->has('device_id'))
+                                <span id="device_id_error" class="error text-danger"
+                                    for="device_id">{{ $errors->first('device_id') }}</span>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
                         <div class="form-group {{ $errors->has('phone') ? 'has-danger' : '' }}">
                             <label for="phone" class="bmd-label-floating">{{ __('Telefone') }}</label>
                             <input type="text" name="phone"
