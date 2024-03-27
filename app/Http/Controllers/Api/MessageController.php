@@ -53,7 +53,7 @@ class MessageController extends Controller
         }
     }
 
-    public function received(Request $request, ApiManager $apiManager)
+    public function received(Request $request)
     {
         DB::beginTransaction();
 
@@ -71,7 +71,7 @@ class MessageController extends Controller
             );
 
             if ($chat) {
-                $this->processReceivedMessage($chat, $messageId, $message, $status, $phone, $device, $apiManager);
+                $this->processReceivedMessage($chat, $messageId, $message, $status, $phone, $device, $this->apiManager);
             }
 
             DB::commit();
