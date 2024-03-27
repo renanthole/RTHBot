@@ -13,6 +13,8 @@
 
     <link href="{{ mix('css/app.css') }}" rel="stylesheet">
 
+    <link rel="shortcut icon" href="{{ asset('img/logo.png') }}" type="image/x-icon">
+
     @yield('third_party_stylesheets')
 
     @stack('page_css')
