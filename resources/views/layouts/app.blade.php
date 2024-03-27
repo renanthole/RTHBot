@@ -18,7 +18,7 @@
     @stack('page_css')
 </head>
 
-<body class="hold-transition sidebar-mini layout-fixed">
+<body class="dark-mode hold-transition sidebar-mini layout-fixed">
     <div class="wrapper">
         @include('layouts.navbar')
 
