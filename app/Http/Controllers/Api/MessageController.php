@@ -119,10 +119,10 @@ class MessageController extends Controller
         if ($awnserQuestion) {
             if ((bool) $awnserQuestion->free === false) {
                 if ($lastMessageReceived->message == $awnserQuestion->option) {
-                    $apiManager->sendMessage($awnserQuestion->nextQuestion->question, $phone, $device, $chat);
+                    $apiManager->sendMessage($awnserQuestion->followUpQuestion(), $phone, $device, $chat);
                 }
             } else {
-                $apiManager->sendMessage($awnserQuestion->nextQuestion->question, $phone, $device, $chat);
+                $apiManager->sendMessage($awnserQuestion->followUpQuestion(), $phone, $device, $chat);
             }
         } else {
             $apiManager->sendMessage('Opção inválida', $phone, $device, $chat);

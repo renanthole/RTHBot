@@ -43,4 +43,9 @@ class Answer extends Model
     {
         return is_null($this->next_id) ? 'Finalizar atendimento' : $this->nextQuestion->title;
     }
+
+    public function followUpQuestion()
+    {
+        return is_null($this->next_id) ? 'Foi um prazer estar em contato! Mal posso esperar para nos encontrarmos novamente. Até breve!' : $this->nextQuestion->question;
+    }
 }
