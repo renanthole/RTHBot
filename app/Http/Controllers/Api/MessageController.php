@@ -53,11 +53,11 @@ class MessageController extends Controller
         }
     }
 
-    public function received(Request $request)
+    public function received(Request $request, ApiManager $apiManager)
     {
-        try {
-            DB::beginTransaction();
+        DB::beginTransaction();
 
+        try {
             $message = $request->text['message'];
             $phone = $request->phone;
             $status = $request->status;
@@ -71,46 +71,61 @@ class MessageController extends Controller
             );
 
             if ($chat) {
-                $quiz = Quiz::where('id', $chat->quiz_id)->first();
-                
-                Message::create([
-                    'chat_id' => $chat->id,
-                    'message_id' => $messageId,
-                    'type' => 'ReceivedCallback',
-                    'message' => $message,
-                    'status' => $status,
-                    'created_at' => now()
-                ]);
-
-                if ($chat->wasRecentlyCreated) {
-                    $question = Question::where('quiz_id', $quiz->id)->where('position', 1)->first();
-                    $this->apiManager->sendMessage($question->question, $phone, $device, $chat);
-                } else {
-                    $lastMessageReceived = Message::where('chat_id', $chat->id)->where('status', 'RECEIVED')->latest()->first();
-                    $lastMessageDelivered = Message::where('chat_id', $chat->id)->where('status', 'DELIVERED')->where('message', '<>', 'Opção inválida')->latest()->first();
-
-                    $lastQuestionDelivered = Question::where('question', $lastMessageDelivered->message)->first();
-                    $awnserQuestion = Answer::where('quiz_id', $quiz->id)->where('question_id', $lastQuestionDelivered->id)->where('option', $lastMessageReceived->message)->first();
-
-                    if ($awnserQuestion) {
-                        if ((bool) $awnserQuestion->free === false) {
-                            if ($lastMessageReceived->message == $awnserQuestion->option) {
-                                $this->apiManager->sendMessage($awnserQuestion->nextQuestion->question, $phone, $device, $chat);
-                            }
-                        } else {
-                            $this->apiManager->sendMessage($awnserQuestion->nextQuestion->question, $phone, $device, $chat);
-                        }
-                    } else {
-                        $this->apiManager->sendMessage('Opção inválida', $phone, $device, $chat);
-                    }
-                }
-
-                DB::commit();
+                $this->processReceivedMessage($chat, $messageId, $message, $status, $phone, $device, $apiManager);
             }
+
+            DB::commit();
         } catch (Exception $e) {
             DB::rollBack();
             logger($e->getMessage());
             return response()->json('Error: ' . $e->getMessage() . '. Line: ' . $e->getLine(), 500);
+        }
+    }
+
+    private function processReceivedMessage($chat, $messageId, $message, $status, $phone, $device, $apiManager)
+    {
+        $quiz = Quiz::findOrFail($chat->quiz_id);
+
+        Message::create([
+            'chat_id' => $chat->id,
+            'message_id' => $messageId,
+            'type' => 'ReceivedCallback',
+            'message' => $message,
+            'status' => $status,
+            'created_at' => now()
+        ]);
+
+        if ($chat->wasRecentlyCreated) {
+            $this->sendFirstQuestion($chat, $phone, $device, $apiManager);
+        } else {
+            $this->processFollowUpQuestion($chat, $phone, $device, $apiManager);
+        }
+    }
+
+    private function sendFirstQuestion($chat, $phone, $device, $apiManager)
+    {
+        $question = Question::where('quiz_id', $chat->quiz_id)->where('position', 1)->first();
+        $apiManager->sendMessage($question->question, $phone, $device, $chat);
+    }
+
+    private function processFollowUpQuestion($chat, $phone, $device, $apiManager)
+    {
+        $lastMessageReceived = Message::where('chat_id', $chat->id)->where('status', 'RECEIVED')->latest()->first();
+        $lastMessageDelivered = Message::where('chat_id', $chat->id)->where('status', 'DELIVERED')->where('message', '<>', 'Opção inválida')->latest()->first();
+
+        $lastQuestionDelivered = Question::where('question', $lastMessageDelivered->message)->first();
+        $awnserQuestion = Answer::where('quiz_id', $chat->quiz_id)->where('question_id', $lastQuestionDelivered->id)->where('option', $lastMessageReceived->message)->first();
+
+        if ($awnserQuestion) {
+            if ((bool) $awnserQuestion->free === false) {
+                if ($lastMessageReceived->message == $awnserQuestion->option) {
+                    $apiManager->sendMessage($awnserQuestion->nextQuestion->question, $phone, $device, $chat);
+                }
+            } else {
+                $apiManager->sendMessage($awnserQuestion->nextQuestion->question, $phone, $device, $chat);
+            }
+        } else {
+            $apiManager->sendMessage('Opção inválida', $phone, $device, $chat);
         }
     }
 }
