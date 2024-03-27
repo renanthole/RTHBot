@@ -40,6 +40,37 @@
                         </div>
                     </div>
                 </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group {{ $errors->has('initial') ? 'has-danger' : '' }}">
+                            <label for="initial" class="bmd-label-floating">{{ __('Atendimento Inicial') }}</label>
+                            <select name="initial" id="initial" class="form-control">
+                                <option value="1" {{ $quiz->initial == 1 ? 'selected' : '' }}>Sim</option>
+                                <option value="0" {{ $quiz->initial == 0 ? 'selected' : '' }}>Não</option>
+                            </select>
+                            <small class="text-help">Selecione se este questionário será o questionário inicial do
+                                atendimento ao receber uma nova mensagem</small>
+                            @if ($errors->has('initial'))
+                                <span id="initial_error" class="error text-danger"
+                                    for="initial">{{ $errors->first('initial') }}</span>
+                            @endif
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group {{ $errors->has('nps') ? 'has-danger' : '' }}">
+                            <label for="nps" class="bmd-label-floating">{{ __('NPS') }}</label>
+                            <select name="nps" id="nps" class="form-control">
+                                <option value="1" {{ (bool) $quiz->nps == 1 ? 'selected' : '' }}>Sim</option>
+                                <option value="0" {{ (bool) $quiz->nps == 0 ? 'selected' : '' }}>Não</option>
+                            </select>
+                            <small class="text-help">Questionário para registro de NPS.</small>
+                            @if ($errors->has('nps'))
+                                <span id="nps_error" class="error text-danger"
+                                    for="nps">{{ $errors->first('nps') }}</span>
+                            @endif
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="card-footer clearfix">
                 <button class="btn btn-primary btn-sm"><i class="fas fa-save"></i> {{ __('Salvar') }}</button>

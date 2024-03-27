@@ -4,10 +4,12 @@ namespace App\Http\Controllers\Api;
 
 use App\Api\ApiManager;
 use App\Http\Controllers\Controller;
+use App\Models\Answer;
 use App\Models\Chat;
 use App\Models\Device;
 use App\Models\Message;
 use App\Models\Question;
+use App\Models\Quiz;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -55,16 +57,17 @@ class MessageController extends Controller
     {
         try {
             DB::beginTransaction();
-            
+
             $message = $request->text['message'];
             $phone = $request->phone;
             $status = $request->status;
             $messageId = $request->messageId;
             $device = Device::where('phone', $request->connectedPhone)->first();
+            $quiz = Quiz::where('initial', 1)->first();
 
             $chat = Chat::firstOrCreate(
-                ['device_id' => $device->id, 'phone' => $phone],
-                ['finished_at' => null]
+                ['device_id' => $device->id, 'phone' => $phone, 'finished_at' => null],
+                ['quiz_id' => $quiz->id]
             );
 
             if ($chat) {
@@ -78,10 +81,26 @@ class MessageController extends Controller
                 ]);
 
                 if ($chat->wasRecentlyCreated) {
-                    $question = Question::where('position', 1)->first();
+                    $question = Question::where('quiz_id', $quiz->id)->where('position', 1)->first();
                     $this->apiManager->sendMessage($question->question, $phone, $device, $chat);
                 } else {
-                    // $this->apiManager->sendMessage("Você enviou uma mensagem que não contem o texto 'Mensagem 123'", $phone, $device);
+                    $lastMessageReceived = Message::where('chat_id', $chat->id)->where('status', 'RECEIVED')->latest()->first();
+                    $lastMessageDelivered = Message::where('chat_id', $chat->id)->where('status', 'DELIVERED')->where('message', '<>', 'Opção inválida')->latest()->first();
+
+                    $lastQuestionDelivered = Question::where('question', $lastMessageDelivered->message)->first();
+                    $awnserQuestion = Answer::where('quiz_id', $quiz->id)->where('question_id', $lastQuestionDelivered->id)->where('option', $lastMessageReceived->message)->first();
+
+                    if ($awnserQuestion) {
+                        if ((bool) $awnserQuestion->free === false) {
+                            if ($lastMessageReceived->message == $awnserQuestion->option) {
+                                $this->apiManager->sendMessage($awnserQuestion->nextQuestion->question, $phone, $device, $chat);
+                            }
+                        } else {
+                            $this->apiManager->sendMessage($awnserQuestion->nextQuestion->question, $phone, $device, $chat);
+                        }
+                    } else {
+                        $this->apiManager->sendMessage('Opção inválida', $phone, $device, $chat);
+                    }
                 }
 
                 DB::commit();

@@ -19,6 +19,7 @@ class Chat extends Model
      */
     protected $fillable = [
         'device_id',
+        'quiz_id',
         'phone',
         'zaap_id',
         'finished_at'
@@ -27,6 +28,11 @@ class Chat extends Model
     public function device(): BelongsTo
     {
         return $this->belongsTo(Device::class);
+    }
+
+    public function quiz(): BelongsTo
+    {
+        return $this->belongsTo(Quiz::class);
     }
 
     public function messages(): HasMany

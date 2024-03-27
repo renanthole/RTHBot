@@ -2,7 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Api\ApiManager;
 use App\Http\Requests\QuizRequest;
+use App\Models\Chat;
+use App\Models\Device;
+use App\Models\Message;
+use App\Models\Question;
 use App\Models\Quiz;
 use Exception;
 use Illuminate\Http\Request;
@@ -11,6 +16,13 @@ use RealRashid\SweetAlert\Facades\Alert;
 
 class QuizController extends Controller
 {
+    private $apiManager;
+
+    public function __construct()
+    {
+        $this->apiManager = new ApiManager(config('z-api'));
+    }
+    
     /**
      * Display a listing of the resource.
      *
@@ -49,6 +61,8 @@ class QuizController extends Controller
             Quiz::create([
                 'title' => $request->title,
                 'description' => $request->description,
+                'initial' => $request->initial,
+                'nps' => $request->nps,
                 'created_at' => now()
             ]);
 
@@ -100,6 +114,8 @@ class QuizController extends Controller
             $quiz->update([
                 'title' => $request->title,
                 'description' => $request->description,
+                'initial' => $request->initial,
+                'nps' => $request->nps,
                 'updated_at' => now()
             ]);
 
@@ -135,6 +151,52 @@ class QuizController extends Controller
             DB::rollBack();
             Alert::toast(__('message.error'), 'error')->persistent();
             return redirect()->route('quizzes.index')->withInput();
+        }
+    }
+
+    /**
+     * Send the specified resource from storage.
+     *
+     * @param  \App\Models\Quiz  $quiz
+     * @return \Illuminate\Http\Response
+     */
+    public function send(Quiz $quiz)
+    {
+        return view('pages.quizzes.send', compact('quiz'));
+    }
+
+    /**
+     * Send the specified resource from storage.
+     *
+     * @param  \App\Models\Quiz  $quiz
+     * @return \Illuminate\Http\Response
+     */
+    public function sendStore(Quiz $quiz, Request $request)
+    {
+
+        try {
+            DB::beginTransaction();
+
+            $phone = $request->phone;
+            $device = Device::where('id', 1)->first();
+
+            $chat = Chat::firstOrCreate(
+                ['device_id' => $device->id, 'phone' => $phone, 'finished_at' => null],
+                ['quiz_id' => $quiz->id]
+            );
+
+            if ($chat) {
+                $question = Question::where('quiz_id', $quiz->id)->where('position', 1)->first();
+                $this->apiManager->sendMessage($question->question, $phone, $device, $chat);
+
+                DB::commit();
+                Alert::toast(__('message.success'), 'success');
+                return redirect()->route('quizzes.send', $quiz->id);
+            }
+        } catch (Exception $e) {
+            DB::rollBack();
+            logger($e->getMessage());
+            return response()->json('Error: ' . $e->getMessage() . '. Line: ' . $e->getLine(), 500);
         }
     }
 }

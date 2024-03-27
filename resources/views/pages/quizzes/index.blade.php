@@ -43,6 +43,9 @@
                             <td class="text-center">{{ $quiz->title }}</td>
                             <td class="text-center">{{ date('d/m/Y H:i', strtotime($quiz->created_at)) }}</td>
                             <td class="text-right">
+                                <a href="{{ route('quizzes.send', $quiz->id) }}" class="btn btn-primary btn-xs">
+                                    <i class="fas fa-question"></i> Enviar
+                                </a>
                                 <a href="{{ route('questions.index', $quiz->id) }}" class="btn btn-success btn-xs">
                                     <i class="fas fa-question"></i> Perguntas
                                 </a>

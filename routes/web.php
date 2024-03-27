@@ -46,6 +46,9 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/edit/{quiz}', [App\Http\Controllers\QuizController::class, 'edit'])->name('edit');
         Route::put('/edit/{quiz}', [App\Http\Controllers\QuizController::class, 'update'])->name('update');
         Route::delete('/delete/{quiz}', [App\Http\Controllers\QuizController::class, 'destroy'])->name('destroy');
+
+        Route::get('/send/{quiz}', [App\Http\Controllers\QuizController::class, 'send'])->name('send');
+        Route::post('/send/{quiz}', [App\Http\Controllers\QuizController::class, 'sendStore'])->name('sendStore');
     });
 
     Route::prefix('quizzes/{quiz}/questions')->name('questions.')->group(function () {
