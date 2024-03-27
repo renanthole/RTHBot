@@ -182,7 +182,7 @@ class QuizController extends Controller
             $phone = $request->phone;
             $device = Device::where('id', $request->device_id)->first();
 
-            $chat = Chat::firstOrCreate([
+            $chat = Chat::create([
                 'device_id' => $device->id,
                 'quiz_id' => $quiz->id,
                 'phone' => $phone,
