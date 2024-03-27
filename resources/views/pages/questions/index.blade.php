@@ -44,7 +44,7 @@
                     @forelse ($questions as $question)
                         <tr>
                             <td>{{ $question->id }}</td>
-                            <td class="text-center">{{ mb_strimwidth($question->question, 0, 25, '...') }}</td>
+                            <td class="text-center">{{ $question->title }}</td>
                             <td class="text-center">{{ $question->position }}</td>
                             <td class="text-center">{{ date('d/m/Y H:i', strtotime($question->created_at)) }}</td>
                             <td class="text-right">
