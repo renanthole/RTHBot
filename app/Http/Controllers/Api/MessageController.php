@@ -71,6 +71,8 @@ class MessageController extends Controller
             );
 
             if ($chat) {
+                $quiz = Quiz::where('id', $chat->quiz_id)->first();
+                
                 Message::create([
                     'chat_id' => $chat->id,
                     'message_id' => $messageId,
